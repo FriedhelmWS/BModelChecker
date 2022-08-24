@@ -16,9 +16,9 @@ INVARIANT         books : POW(BOOK) &
 		  publish_in: BOOK <-> YEAR &
                   r_status : USER --> STATUS &
                   dom(access) <: books &
-                  ran(access) <: users
+                  ran(access) <: users &
        		  borrowed : POW(BOOK) &
-     		  has_borrowed: USER <-> BOOK &
+     		  has_borrowed: USER <-> BOOK 
 
 INITIALISATION    books := {};
                   users := {};
@@ -27,9 +27,9 @@ INITIALISATION    books := {};
                   access := {};
 		  author := BOOK * {};
 		  publish_in := BOOK * {};
-                  r_status := USER * {locked}
+                  r_status := USER * {locked};
 		  borrowed :={};
-   		  has_borrowed:= {};
+   		  has_borrowed:= {}
 
 OPERATIONS
   addbook(kk, aa, yy) = PRE kk:BOOK & kk /: books & aa : AUTHOR & yy:YEAR THEN books := books \/ {kk}; author := author \/ {kk |-> aa}; publish_in := publish_in \/ {kk |-> yy} END;
@@ -50,7 +50,7 @@ OPERATIONS
 
   output <-- Search_author(aa) = PRE books /= {}& aa:AUTHOR THEN output:=author |> {aa} END;
 
-  output <-- Search_year(yy) = PRE books /= {}& yy:YEAR THEN output:=publish_in |> {yy} END;
+  output <-- Search_year(yy) = PRE books /= {}& yy:YEAR THEN output:=publish_in |> {yy} END
 
 
 END
