@@ -36,11 +36,11 @@ OPERATIONS
 
   deletebook(kk) = PRE kk : books& kk/: borrowed & {kk} <| access = {} THEN books := books - {kk}; author := {kk} <<| author; publish_in := {kk} <<| publish_in ; borrowed := borrowed-{kk}; IF kk: dom(reserved) THEN reserved:= {kk} <<| reserved END  END;
 
-  adduser(rr) = PRE rr:USER & rr /: users THEN users := users \/ {rr} END;
+  adduser(rr) = PRE rr:USER & rr /: users THEN users := users \/ {rr} ;  has_borrowed := has_borrowed \/ {rr |-> {}} END;
 
-  deleteuser(rr) = PRE rr : users & access |> {rr} = {} & (has_borrowed={}or has_borrowed(rr)={}) THEN users := users - {rr}; has_borrowed:={rr} <<| has_borrowed  END;
+  deleteuser(rr) = PRE rr : users & access |> {rr} = {} & (has_borrowed={}or has_borrowed(rr)={}) THEN users := users - {rr}; has_borrowed:={rr} <<| has_borrowed ; IF rr: ran(reserved) THEN reserved:= reserved |>> {rr} ELSE reserved:= reserved END END;
 
-  userlogin (uu) = PRE uu : users & uu/: users_has_login THEN users_has_login := users_has_login \/ {uu}; IF uu : dom(has_borrowed) THEN has_borrowed := has_borrowed ELSE has_borrowed := has_borrowed \/ {uu |-> {}} END END;
+  userlogin (uu) = PRE uu : users & uu/: users_has_login THEN users_has_login := users_has_login \/ {uu} END;
 
   buymember (uu) = PRE uu : users & uu: users_has_login & uu: users_has_login & uu/: users_member THEN users_member := users_member \/ {uu} END;
 

@@ -1,0 +1,105 @@
+\begin{document}
+
+\begin{zed}
+[ Name, Title ]
+\end{zed}
+
+\begin{schema}{Library}
+ books : \power Title \\
+ users : \power Name \\
+ borrowed:\power Title\\
+ holds : Name \pfun \power Title 
+\where
+ \dom holds \subseteq users
+\end{schema}
+
+\begin{schema}{Init}
+ Library
+\where
+ users =~\emptyset \\
+ holds =~\emptyset \\
+ borrowed=~\emptyset \\
+ books =~\emptyset
+\end{schema}
+
+\begin{schema}{AddBook}
+ \Delta Library \\
+ b? : Title 
+\where
+ b? \notin books \\
+ books' = books \cup \{ b? \} \\
+ users'=users\\
+ borrowed'=borrowed\\
+ holds' = holds
+\end{schema}
+
+\begin{schema}{RemoveBook}
+ \Delta Library \\
+ b? : Title 
+\where
+ b? \in books \\
+ b? \notin borrowed \\
+ books' = books \setminus \{ b? \} \\
+ users'=users\\
+ b? \in borrowed \implies borrowed'=borrowed \setminus\{ b?\}\\
+ b? \notin borrowed \implies borrowed'=borrowed \\
+ holds' = holds
+\end{schema}
+
+\begin{schema}{Register}
+ \Delta Library \\
+ p? : Name 
+\where
+ p? \notin users \\
+ users' = users \cup \{ p? \} \\
+ holds' = holds \cup \{ p? \mapsto \emptyset \}\\
+ borrowed'=borrowed\\
+ books'=books
+\end{schema}
+
+\begin{schema}{Withdraw}
+ \Delta Library \\
+ p? : Name 
+\where
+ p? \in users \\
+ holds(p?) = \emptyset\\
+ users' = users \setminus \{ p? \} \\
+ borrowed'=borrowed\\
+ holds' = \{ p? \} \ndres holds\\
+ books'=books
+\end{schema}
+
+\begin{schema}{Borrow}
+ \Delta Library \\
+ p? : Name\\
+ b? : Title
+\where
+ p? \in users \\
+ b? \in books\\
+ b? \notin borrowed\\
+ users' = users \\
+ books'=books\\
+ borrowed' = borrowed \cup \{ b? \} \\
+ holds' = holds \oplus \{ p? \mapsto holds(p?) \cup \{b?\} \}
+ 
+\end{schema}
+
+\begin{schema}{Return}
+ \Delta Library \\
+ p? : Name\\
+ b? : Title
+\where
+ p? \in users \\
+ p? \in \dom holds \\
+ b? \in books\\
+ b? \in borrowed\\
+ b? \in holds(p?) \\
+ users' = users \\
+ books'=books\\
+ borrowed' = borrowed \setminus \{ b? \} \\
+ holds' = holds \oplus \{ p? \mapsto holds(p?) \setminus \{b?\} \} \\
+\end{schema}
+
+
+
+\end{document}
