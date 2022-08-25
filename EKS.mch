@@ -5,7 +5,6 @@ SETS              BOOK; USER; STATUS = {locked, unlocked}; AUTHOR; YEAR; CATEGOR
 
 VARIABLES         books, users, users_has_login, users_member, author, publish_in, borrowed, has_borrowed, reserved, book_category
 
-PROPERTIES		  card(BOOK) = 5
 
 INVARIANT         books : POW(BOOK) & 
 		  book_category :  CATEGORY<-> BOOK &
@@ -57,6 +56,8 @@ OPERATIONS
   output <-- Search_author(aa) = PRE books /= {} & aa:AUTHOR THEN output:=author |> {aa} END;
 
   output <-- Search_year(yy) = PRE books /= {} & yy:YEAR THEN output:=publish_in |> {yy} END;
+
+  output <-- Get_book_of_the_day = ANY item WHERE item : books THEN output:= item END;
 
   output <-- Search_category(cc) = PRE books /= {} & cc:CATEGORY THEN output:= {cc}<| book_category  END
 
