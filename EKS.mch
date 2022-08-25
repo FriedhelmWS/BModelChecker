@@ -1,11 +1,10 @@
 MACHINE           EKS
 /* This B Machine models a simplified electronic key system.
 */
-SETS              BOOK; USER; STATUS = {locked, unlocked}; AUTHOR; YEAR
+SETS              BOOK; USER; STATUS = {locked, unlocked}; AUTHOR; YEAR; SELLITEM
 
-VARIABLES         books, users, users_has_login, users_member, access, author, publish_in, borrowed, has_borrowed, reserved
+VARIABLES         books, users, users_has_login, users_member, access, author, publish_in, borrowed, has_borrowed, reserved, items, price,stock
 
-PROPERTIES		  card(BOOK) = 5
 
 INVARIANT         books : POW(BOOK) & 
                   users : POW(USER) & 
@@ -18,6 +17,9 @@ INVARIANT         books : POW(BOOK) &
                   ran(access) <: users &
        		  borrowed : POW(BOOK) &
      		  has_borrowed: USER <-> POW(BOOK) &
+                  items : POW(SELLITEM)&
+		  price: SELLITEM <-> FLOAT &
+		  stock: SELLITEM <-> NATURAL &
 		  reserved: BOOK +-> USER
 
 INITIALISATION    books := {};
@@ -29,6 +31,9 @@ INITIALISATION    books := {};
 		  publish_in := BOOK * {};
 		  borrowed :={};
 		  reserved := {};
+		  items := {};
+		  price := {};
+		  stock := {};
    		  has_borrowed:= {}
 
 OPERATIONS
@@ -51,6 +56,14 @@ OPERATIONS
   returnbook(kk,uu) = PRE kk:BOOK & kk:books & kk: borrowed & kk:has_borrowed(uu) & uu:users & uu:users_has_login THEN borrowed := borrowed - {kk}; has_borrowed(uu) := has_borrowed(uu)-{kk} END;
 
   reservebook(kk,uu) = PRE kk:BOOK & kk:books & kk: borrowed & kk /: has_borrowed(uu) & uu:users & uu:users_has_login & kk/: dom(reserved)THEN reserved := reserved \/ {kk |-> uu}END;
+
+  addsellingItem(item, unitprice, stocknumber) =  PRE item: SELLITEM & item /: items & unitprice : FLOAT & unitprice>=1.0 & stocknumber : NATURAL1 THEN items:= items\/{item}; price:= price \/ {item|->unitprice};stock:= stock \/{item|->stocknumber} END;
+
+ 
+
+  deletesellingItem(item) = PRE item: SELLITEM & item:items THEN items:= items - {item}; stock:= {item} <<| stock; price:={item} <<| price END;
+
+  output <-- BuyItem(item,numwanted,uu) = PRE uu: USER & uu: users_has_login & uu:users & item:SELLITEM & item: items & numwanted <= stock(item) & numwanted :NATURAL1 THEN stock(item):= stock(item)-numwanted; output := numwanted * ceiling(price(item)) END;
 
   output <-- Search_author(aa) = PRE books /= {}& aa:AUTHOR THEN output:=author |> {aa} END;
 
