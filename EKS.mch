@@ -1,7 +1,7 @@
 MACHINE           EKS
 /* This B Machine models a simplified electronic key system.
 */
-SETS              BOOK; USER; STATUS = {locked, unlocked}; AUTHOR; YEAR; CATEGORY = {Fantasy, SciFi, Mystery, Romance}
+SETS              BOOK; USER; AUTHOR; YEAR; CATEGORY = {Fantasy, SciFi, Mystery, Romance}
 
 VARIABLES         books, users, users_has_login, users_member, author, publish_in, borrowed, has_borrowed, reserved, book_category
 
