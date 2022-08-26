@@ -45,7 +45,7 @@ OPERATIONS
 
   userlogout (uu) = PRE uu : users & uu: users_has_login THEN users_has_login := users_has_login - {uu} END;
 
-  borrowbook(kk,uu) = PRE kk:BOOK & kk:books & kk/: borrowed & uu:users & uu:users_has_login & ( kk/: dom(reserved) or (kk: dom(reserved) & reserved(kk)=uu)) & ( uu : users_member or (uu/: users_member & card(has_borrowed(uu))<=1))THEN borrowed := borrowed \/ {kk}; has_borrowed(uu) := has_borrowed(uu)\/{kk}; IF kk: dom(reserved) THEN reserved:= {kk} <<| reserved END END;
+  borrowbook(kk,uu) = PRE kk:BOOK & kk:books & kk/: borrowed & uu:users & uu:users_has_login & ( kk/: dom(reserved) or (kk: dom(reserved) & reserved(kk)=uu)) & ( uu : users_member or (uu /: users_member & card(has_borrowed(uu))=0))THEN borrowed := borrowed \/ {kk}; has_borrowed(uu) := has_borrowed(uu)\/{kk}; IF kk: dom(reserved) THEN reserved:= {kk} <<| reserved END END;
 
   returnbook(kk,uu) = PRE kk:BOOK & kk:books & kk: borrowed & kk:has_borrowed(uu) & uu:users & uu:users_has_login THEN borrowed := borrowed - {kk}; has_borrowed(uu) := has_borrowed(uu)-{kk} END;
 
