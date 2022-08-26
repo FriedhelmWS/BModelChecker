@@ -33,7 +33,7 @@ OPERATIONS
 
   setbookcategory(kk, cc) = PRE kk:BOOK & kk: books & cc: CATEGORY & cc |-> kk/:book_category THEN book_category := book_category \/ {cc |-> kk} END;
 
-  deletebook(kk) = PRE kk : books& kk/: borrowed THEN books := books - {kk}; author := {kk} <<| author; publish_in := {kk} <<| publish_in ; borrowed := borrowed-{kk}; IF kk: dom(reserved) THEN reserved:= {kk} <<| reserved END  END;
+  deletebook(kk) = PRE kk : books& kk/: borrowed THEN books := books - {kk}; author := {kk} <<| author; publish_in := {kk} <<| publish_in ; book_category := book_category |>> {kk}; IF kk: dom(reserved) THEN reserved:= {kk} <<| reserved END  END;
 
   adduser(rr) = PRE rr:USER & rr /: users THEN users := users \/ {rr} ;  has_borrowed := has_borrowed \/ {rr |-> {}} END;
 
