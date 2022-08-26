@@ -61,7 +61,9 @@ OPERATIONS
 
   output <-- Get_book_of_the_day = ANY item WHERE item : books THEN output:= item END;
 
-  output <-- Search_category(cc) = PRE books /= {} & cc:CATEGORY THEN output:= {cc}<| book_category  END
+  output <-- Search_category(cc) = PRE books /= {} & cc:CATEGORY THEN output:= {cc}<| book_category  END;
+
+  output <-- Search_book(bb) = PRE books /= {} THEN IF bb: books THEN output:= {bb} ELSE output:= {}  END END
 
 
 END
