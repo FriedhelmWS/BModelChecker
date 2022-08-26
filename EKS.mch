@@ -45,13 +45,15 @@ OPERATIONS
 
   userlogout (uu) = PRE uu : users & uu: users_has_login THEN users_has_login := users_has_login - {uu} END;
 
-  borrowbook(kk,uu) = PRE kk:BOOK & kk:books & kk/: borrowed & uu:users & uu:users_has_login & ( kk/: dom(reserved) or (kk: dom(reserved) & reserved(kk)=uu)) THEN borrowed := borrowed \/ {kk}; has_borrowed(uu) := has_borrowed(uu)\/{kk}; IF kk: dom(reserved) THEN reserved:= {kk} <<| reserved END END;
+  borrowbook(kk,uu) = PRE kk:BOOK & kk:books & kk/: borrowed & uu:users & uu:users_has_login & ( kk/: dom(reserved) or (kk: dom(reserved) & reserved(kk)=uu)) & ( uu : users_member or (uu/: users_member & card(has_borrowed(uu))<=1))THEN borrowed := borrowed \/ {kk}; has_borrowed(uu) := has_borrowed(uu)\/{kk}; IF kk: dom(reserved) THEN reserved:= {kk} <<| reserved END END;
 
   returnbook(kk,uu) = PRE kk:BOOK & kk:books & kk: borrowed & kk:has_borrowed(uu) & uu:users & uu:users_has_login THEN borrowed := borrowed - {kk}; has_borrowed(uu) := has_borrowed(uu)-{kk} END;
 
   returnallbook(uu) = PRE uu:users & card(has_borrowed(uu))>0 & uu:users_has_login THEN borrowed := borrowed - has_borrowed(uu); has_borrowed(uu) := {} END;
 
-  reservebook(kk,uu) = PRE kk:BOOK & kk:books & kk: borrowed & kk /: has_borrowed(uu) & uu:users & uu:users_has_login & kk/: dom(reserved)THEN reserved := reserved \/ {kk |-> uu}END;
+  reservebook(kk,uu) = PRE kk:BOOK & kk:books & kk: borrowed & kk /: has_borrowed(uu) & uu:users & uu:users_has_login & kk/: dom(reserved)  & uu:users_member THEN reserved := reserved \/ {kk |-> uu}END;
+
+  output <-- Get_all_available_books = PRE books /= {} THEN output:= books - borrowed - dom(reserved) END;
 
   output <-- Search_author(aa) = PRE books /= {} & aa:AUTHOR THEN output:=author |> {aa} END;
 
